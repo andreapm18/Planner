@@ -125,6 +125,50 @@
   gap: 0.4rem;
 }
 
+/* Editable column header */
+.kanban-header-title {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.kanban-header-title span {
+  font-weight: 600;
+}
+
+.kanban-header-title input {
+  border: none;
+  background: transparent;
+  font: inherit;
+  padding: 0;
+  width: 100%;
+  outline: none;
+  border-radius: 6px;
+}
+
+.kanban-header-title input:focus {
+  background: #ffeef8;
+}
+
+.kanban-header-actions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.kanban-header-btn {
+  font-size: 0.75rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 999px;
+  border: 1px solid #f0d7e9;
+  background: #fff;
+  color: var(--text-muted);
+}
+
+.kanban-header-btn:hover {
+  background: #ffeef8;
+}
+
+
 /* Task card */
 .task-card {
   background: #ffffff;
