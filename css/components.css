@@ -1,0 +1,35 @@
+/* Modals */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(28, 13, 22, 0.3);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.modal.open {
+  display: flex;
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: 16px;
+  padding: 1rem 1.1rem;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.2);
+}
+
+.modal-content h2 {
+  margin-top: 0;
+  margin-bottom: 0.6rem;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.4rem;
+  margin-top: 0.8rem;
+}

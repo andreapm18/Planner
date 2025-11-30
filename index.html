@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>PinkPlanner – Productivity Workspace</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/components.css" />
+</head>
+<body>
+  <div class="app">
+
+    <!-- Top Navigation -->
+    <header class="top-nav">
+      <div class="logo">
+        <span class="logo-mark">✿</span>
+        <span class="logo-text">PinkPlanner</span>
+      </div>
+
+      <div class="global-search">
+        <input
+          type="text"
+          id="globalSearch"
+          placeholder="Search tasks, events, notes..."
+        />
+      </div>
+
+      <div class="top-actions">
+        <button id="quickCommandBtn" class="btn-icon" title="Quick command">＋</button>
+        <button id="themeToggleBtn" class="btn-secondary">Theme</button>
+        <div class="profile-avatar">A</div>
+      </div>
+    </header>
+
+    <!-- Main Layout -->
+    <div class="app-layout">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <nav class="main-nav">
+          <button class="nav-link active" data-page="dashboard">Dashboard</button>
+          <button class="nav-link" data-page="tasks">Tasks</button>
+          <button class="nav-link" data-page="calendar">Calendar</button>
+          <button class="nav-link" data-page="notes">Notes</button>
+          <button class="nav-link" data-page="habits">Habits</button>
+        </nav>
+
+        <div class="sidebar-section categories">
+          <div class="sidebar-section-header">
+            <span>Categories</span>
+            <button id="addCategoryBtn" class="btn-icon" title="Add category">＋</button>
+          </div>
+          <ul id="categoryList" class="category-list">
+            <!-- Filled by JS -->
+          </ul>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- Dashboard -->
+        <section id="dashboard" class="page-section active">
+          <div class="page-header">
+            <h1>Dashboard</h1>
+          </div>
+          <div class="grid-3">
+            <div class="card">
+              <h2>Today</h2>
+              <p id="todayDateText" class="muted"></p>
+              <p><strong id="todayTasksCount">0</strong> task(s) due today</p>
+              <div class="quick-add-inline">
+                <input
+                  type="text"
+                  id="quickTaskInput"
+                  placeholder="Quick add task..."
+                />
+                <button id="quickTaskAddBtn" class="btn-primary">Add</button>
+              </div>
+            </div>
+
+            <div class="card">
+              <h2>This Week</h2>
+              <p>
+                Done:
+                <strong id="weekDoneCount">0</strong> /
+                <span id="weekTotalCount">0</span> tasks
+              </p>
+              <div class="progress-bar">
+                <div class="progress-bar-inner" id="weekProgressBar"></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <h2>Habits Today</h2>
+              <p><strong id="habitsCompletedToday">0</strong> completed</p>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="card">
+              <h2>Upcoming Events</h2>
+              <ul id="upcomingEventsList" class="simple-list"></ul>
+            </div>
+
+            <div class="card">
+              <h2>Pomodoro</h2>
+              <div class="pomodoro-display" id="pomodoroDisplay">25:00</div>
+              <div class="pomodoro-controls">
+                <button id="pomodoroStartBtn" class="btn-primary">Start</button>
+                <button id="pomodoroPauseBtn" class="btn-secondary">Pause</button>
+                <button id="pomodoroResetBtn" class="btn-ghost">Reset</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Tasks -->
+        <section id="tasks" class="page-section">
+          <div class="page-header">
+            <h1>Tasks</h1>
+            <div>
+              <button id="addTaskBtn" class="btn-primary">＋ New Task</button>
+              <button id="toggleTaskViewBtn" class="btn-secondary">
+                Board View
+              </button>
+            </div>
+          </div>
+
+          <div id="tasksBoardView">
+            <div class="kanban">
+              <div class="kanban-column" data-status="not_started">
+                <div class="kanban-header">
+                  <span>Not Started</span>
+                  <span class="kanban-count" id="count-not_started">0</span>
+                </div>
+                <div class="kanban-list" id="column-not_started"></div>
+              </div>
+
+              <div class="kanban-column" data-status="in_progress">
+                <div class="kanban-header">
+                  <span>In Progress</span>
+                  <span class="kanban-count" id="count-in_progress">0</span>
+                </div>
+                <div class="kanban-list" id="column-in_progress"></div>
+              </div>
+
+              <div class="kanban-column" data-status="almost_done">
+                <div class="kanban-header">
+                  <span>Almost Done</span>
+                  <span class="kanban-count" id="count-almost_done">0</span>
+                </div>
+                <div class="kanban-list" id="column-almost_done"></div>
+              </div>
+
+              <div class="kanban-column" data-status="done">
+                <div class="kanban-header">
+                  <span>Done</span>
+                  <span class="kanban-count" id="count-done">0</span>
+                </div>
+                <div class="kanban-list" id="column-done"></div>
+              </div>
+            </div>
+          </div>
+
+          <div id="tasksListView" class="hidden">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Status</th>
+                  <th>Due</th>
+                  <th>Category</th>
+                  <th>Priority</th>
+                </tr>
+              </thead>
+              <tbody id="tasksListBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Calendar -->
+        <section id="calendar" class="page-section">
+          <div class="page-header">
+            <h1>Calendar</h1>
+            <div class="calendar-controls">
+              <button id="prevMonthBtn" class="btn-ghost">‹</button>
+              <span id="calendarMonthLabel"></span>
+              <button id="nextMonthBtn" class="btn-ghost">›</button>
+              <button id="addEventBtn" class="btn-secondary">
+                ＋ New Event
+              </button>
+            </div>
+          </div>
+
+          <div class="calendar-layout">
+            <div class="calendar-grid">
+              <div class="calendar-weekdays">
+                <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div>
+                <div>Thu</div><div>Fri</div><div>Sat</div>
+              </div>
+              <div id="calendarDays" class="calendar-days">
+                <!-- Filled by JS -->
+              </div>
+            </div>
+
+            <aside class="calendar-side">
+              <div class="card">
+                <h2>Today</h2>
+                <p id="calendarTodayDate"></p>
+                <h3>Tasks</h3>
+                <ul id="calendarTodayTasks" class="simple-list"></ul>
+                <h3>Events</h3>
+                <ul id="calendarTodayEvents" class="simple-list"></ul>
+              </div>
+
+              <div class="card">
+                <h2>Category Filter</h2>
+                <div id="calendarCategoryFilter" class="chip-list">
+                  <!-- Filled by JS -->
+                </div>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <!-- Notes -->
+        <section id="notes" class="page-section">
+          <div class="page-header">
+            <h1>Notes</h1>
+            <button id="addNoteBtn" class="btn-primary">＋ New Note</button>
+          </div>
+
+          <div id="notesList" class="notes-grid">
+            <!-- Filled by JS -->
+          </div>
+        </section>
+
+        <!-- Habits -->
+        <section id="habits" class="page-section">
+          <div class="page-header">
+            <h1>Habits</h1>
+            <button id="addHabitBtn" class="btn-primary">＋ New Habit</button>
+          </div>
+
+          <div id="habitsList" class="habits-list">
+            <!-- Filled by JS -->
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- Modals -->
+
+  <!-- Task Modal -->
+  <div id="taskModal" class="modal">
+    <div class="modal-content">
+      <h2 id="taskModalTitle">New Task</h2>
+      <form id="taskForm">
+        <input type="hidden" id="taskId" />
+        <label>
+          Title
+          <input type="text" id="taskTitle" required />
+        </label>
+        <label>
+          Description
+          <textarea id="taskDescription" rows="3"></textarea>
+        </label>
+        <label>
+          Status
+          <select id="taskStatus">
+            <option value="not_started">Not started</option>
+            <option value="in_progress">In progress</option>
+            <option value="almost_done">Almost done</option>
+            <option value="done">Done</option>
+          </select>
+        </label>
+        <label>
+          Due date
+          <input type="date" id="taskDueDate" />
+        </label>
+        <label>
+          Category
+          <select id="taskCategory"></select>
+        </label>
+        <label>
+          Priority
+          <select id="taskPriority">
+            <option value="low">Low</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
+          </select>
+        </label>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-ghost" data-close-modal="taskModal">
+            Cancel
+          </button>
+          <button type="submit" class="btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Event Modal -->
+  <div id="eventModal" class="modal">
+    <div class="modal-content">
+      <h2 id="eventModalTitle">New Event</h2>
+      <form id="eventForm">
+        <input type="hidden" id="eventId" />
+        <label>
+          Title
+          <input type="text" id="eventTitle" required />
+        </label>
+        <label>
+          Date
+          <input type="date" id="eventDate" required />
+        </label>
+        <label>
+          Start time
+          <input type="time" id="eventStartTime" />
+        </label>
+        <label>
+          End time
+          <input type="time" id="eventEndTime" />
+        </label>
+        <label>
+          Category
+          <select id="eventCategory"></select>
+        </label>
+        <div class="modal-actions">
+          <button type="button" class="btn-ghost" data-close-modal="eventModal">
+            Cancel
+          </button>
+          <button type="submit" class="btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Note Modal -->
+  <div id="noteModal" class="modal">
+    <div class="modal-content">
+      <h2 id="noteModalTitle">New Note</h2>
+      <form id="noteForm">
+        <input type="hidden" id="noteId" />
+        <label>
+          Title
+          <input type="text" id="noteTitle" required />
+        </label>
+        <label>
+          Content
+          <textarea id="noteContent" rows="5"></textarea>
+        </label>
+        <label>
+          Category
+          <select id="noteCategory"></select>
+        </label>
+        <label class="checkbox-inline">
+          <input type="checkbox" id="notePinned" /> Pin note
+        </label>
+        <div class="modal-actions">
+          <button type="button" class="btn-ghost" data-close-modal="noteModal">
+            Cancel
+          </button>
+          <button type="submit" class="btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Habit Modal -->
+  <div id="habitModal" class="modal">
+    <div class="modal-content">
+      <h2 id="habitModalTitle">New Habit</h2>
+      <form id="habitForm">
+        <input type="hidden" id="habitId" />
+        <label>
+          Name
+          <input type="text" id="habitName" required />
+        </label>
+        <label>
+          Frequency
+          <select id="habitFrequency">
+            <option value="daily">Daily</option>
+            <option value="weekdays">Weekdays</option>
+          </select>
+        </label>
+        <label>
+          Color
+          <select id="habitColor">
+            <option value="var(--pink-main)">Pink</option>
+            <option value="var(--blue-accent)">Blue</option>
+            <option value="var(--purple-accent)">Purple</option>
+            <option value="var(--yellow-accent)">Yellow</option>
+            <option value="var(--mint-accent)">Mint</option>
+            <option value="var(--sky-accent)">Sky</option>
+          </select>
+        </label>
+        <div class="modal-actions">
+          <button type="button" class="btn-ghost" data-close-modal="habitModal">
+            Cancel
+          </button>
+          <button type="submit" class="btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Category Modal -->
+  <div id="categoryModal" class="modal">
+    <div class="modal-content">
+      <h2 id="categoryModalTitle">New Category</h2>
+      <form id="categoryForm">
+        <input type="hidden" id="categoryId" />
+        <label>
+          Name
+          <input type="text" id="categoryName" required />
+        </label>
+        <label>
+          Color
+          <select id="categoryColor">
+            <option value="var(--pink-main)">Pink</option>
+            <option value="var(--blue-accent)">Blue</option>
+            <option value="var(--purple-accent)">Purple</option>
+            <option value="var(--yellow-accent)">Yellow</option>
+            <option value="var(--mint-accent)">Mint</option>
+            <option value="var(--sky-accent)">Sky</option>
+          </select>
+        </label>
+        <div class="modal-actions">
+          <button type="button" class="btn-ghost" data-close-modal="categoryModal">
+            Cancel
+          </button>
+          <button type="submit" class="btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Settings Modal (placeholder) -->
+  <div id="settingsModal" class="modal">
+    <div class="modal-content">
+      <h2>Settings</h2>
+      <p>More customization can go here ✨</p>
+      <div class="modal-actions">
+        <button type="button" class="btn-primary" data-close-modal="settingsModal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS -->
+  <script src="js/storage.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/tasks.js"></script>
+  <script src="js/calendar.js"></script>
+  <script src="js/notes.js"></script>
+  <script src="js/habits.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
